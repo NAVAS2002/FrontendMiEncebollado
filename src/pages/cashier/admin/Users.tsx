@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createUser, deactivateUser, listUsers, setUserPin } from "../../../api/auth";
+import { createUser, deactivateUser, listUsers, setUserPin, updateUser } from "../../../api/auth";
 import { ApiError } from "../../../api/client";
 import type { Role, UserOut } from "../../../api/types";
 import { CashierShell } from "../../../components/CashierShell";
@@ -158,8 +158,15 @@ function UserRow({
   onDeactivate: () => void;
 }) {
   const [editingPin, setEditingPin] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [pin, setPin] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [username, setUsername] = useState(user.username);
+  const [fullName, setFullName] = useState(user.full_name);
+  const [role, setRole] = useState<Role>(user.role);
+  const [password, setPassword] = useState("");
 
   async function savePin() {
     if (pin.length < 4) return;
@@ -174,6 +181,80 @@ function UserRow({
     }
   }
 
+  async function saveEdit() {
+    setBusy(true);
+    setError(null);
+    try {
+      await updateUser(user.id, {
+        username: username.trim() !== user.username ? username.trim() : undefined,
+        full_name: fullName.trim() !== user.full_name ? fullName.trim() : undefined,
+        role: role !== user.role ? role : undefined,
+        password: password || undefined,
+      });
+      setEditing(false);
+      setPassword("");
+      onChanged();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "No se pudo actualizar el usuario.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (editing) {
+    return (
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-stack-sm">
+        <div className="grid grid-cols-2 gap-stack-sm">
+          <Field label="Usuario" value={username} onChange={setUsername} />
+          <Field label="Nombre completo" value={fullName} onChange={setFullName} />
+        </div>
+        <div>
+          <label className="font-label-caps text-label-caps text-on-surface-variant block mb-1">Rol</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as Role)}
+            className="w-full h-12 rounded-lg border border-outline-variant bg-surface px-4 font-body-md text-body-md outline-none focus:ring-2 focus:ring-tertiary"
+          >
+            {ROLES.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Field
+          label="Nueva contraseña (opcional, déjalo vacío para no cambiarla)"
+          value={password}
+          onChange={setPassword}
+          type="password"
+        />
+        {error && <p className="text-error font-body-md text-sm">{error}</p>}
+        <div className="flex gap-stack-sm justify-end">
+          <button
+            onClick={() => {
+              setEditing(false);
+              setUsername(user.username);
+              setFullName(user.full_name);
+              setRole(user.role);
+              setPassword("");
+              setError(null);
+            }}
+            className="h-10 px-4 font-label-caps text-label-caps text-on-surface-variant"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={saveEdit}
+            disabled={busy || !username.trim() || !fullName.trim()}
+            className="h-10 px-4 rounded-full bg-tertiary text-on-tertiary font-label-caps text-label-caps disabled:opacity-50"
+          >
+            {busy ? "Guardando…" : "Guardar"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-stack-sm">
       <div className="flex items-center justify-between">
@@ -184,12 +265,20 @@ function UserRow({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setEditingPin((v) => !v)} className="text-on-surface-variant">
+          <button
+            onClick={() => setEditing(true)}
+            className="text-on-surface-variant"
+            aria-label="Editar usuario"
+            title="Editar"
+          >
+            <Icon name="edit" className="text-[18px]" />
+          </button>
+          <button onClick={() => setEditingPin((v) => !v)} className="text-on-surface-variant" title="Cambiar PIN">
             <Icon name="pin" />
           </button>
           {user.is_active && (
-            <button onClick={onDeactivate} className="text-error">
-              <Icon name="person_off" />
+            <button onClick={onDeactivate} className="text-error" aria-label="Eliminar usuario" title="Eliminar">
+              <Icon name="delete" />
             </button>
           )}
         </div>

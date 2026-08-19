@@ -68,9 +68,19 @@ export default function KitchenBoard() {
   return (
     <div className="h-dvh flex flex-col bg-background text-on-background overflow-hidden">
       <header className="bg-surface border-b border-outline-variant flex items-center justify-between px-margin-mobile h-touch-target-min shrink-0">
-        <div className="flex items-center gap-2">
-          <StoreLogo size="sm" />
-          <h1 className="font-headline-md text-headline-md">Cocina</h1>
+        <div className="flex items-center gap-stack-md">
+          {session?.role === "ADMIN" && (
+            <button
+              onClick={() => navigate("/caja/pedidos")}
+              className="flex items-center gap-1 h-10 px-3 rounded-full text-on-surface-variant hover:bg-surface-container-high font-label-caps text-label-caps"
+            >
+              <Icon name="arrow_back" className="text-[18px]" /> Volver a Caja
+            </button>
+          )}
+          <div className="flex items-center gap-2">
+            <StoreLogo size="sm" />
+            <h1 className="font-headline-md text-headline-md">Cocina</h1>
+          </div>
         </div>
         <div className="flex items-center gap-stack-md">
           {session && (

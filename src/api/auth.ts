@@ -74,6 +74,13 @@ export async function createUser(input: {
   return request<UserOut>("/users", { method: "POST", body: input });
 }
 
+export async function updateUser(
+  userId: string,
+  input: { username?: string; full_name?: string; role?: string; password?: string },
+): Promise<UserOut> {
+  return request<UserOut>(`/users/${userId}`, { method: "PATCH", body: input });
+}
+
 export async function setUserPin(userId: string, pin: string): Promise<void> {
   await request<void>(`/users/${userId}/pin`, { method: "PUT", body: { pin } });
 }
