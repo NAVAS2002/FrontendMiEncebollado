@@ -8,7 +8,7 @@ import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
 import { OrderStatusBadge, TableStatusBadge } from "../../components/StatusBadge";
 import { formatMoney } from "../../lib/money";
-import { elapsedShort } from "../../lib/time";
+import { elapsedShort, isWeekendNow } from "../../lib/time";
 import { useRealtime } from "../../state/RealtimeContext";
 
 export default function OrdersBoard() {
@@ -46,8 +46,13 @@ export default function OrdersBoard() {
 
   const takeAway = orders?.filter((o) => o.type === "TAKE_AWAY") ?? [];
   const ordersById = new Map((orders ?? []).map((o) => [o.id, o]));
+  const showWeekendTables = isWeekendNow();
   const visibleTables = (tables ?? []).filter(
-    (t) => activeZone === "all" || t.zone_id === activeZone,
+    (t) =>
+      (activeZone === "all" || t.zone_id === activeZone) &&
+      // Entre semana se ocultan las mesas "de fin de semana", salvo que
+      // por algún motivo tengan un pedido abierto: ese nunca se esconde.
+      (!t.weekend_only || showWeekendTables || t.current_order_id !== null),
   );
   const askingForBill = (tables ?? []).filter((t) => t.status === "POR_COBRAR").length;
 

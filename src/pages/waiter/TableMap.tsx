@@ -6,6 +6,7 @@ import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
 import { TableStatusBadge } from "../../components/StatusBadge";
 import { WaiterShell } from "../../components/WaiterShell";
+import { isWeekendNow } from "../../lib/time";
 import { useRealtime } from "../../state/RealtimeContext";
 
 export default function TableMap() {
@@ -32,7 +33,13 @@ export default function TableMap() {
     [load],
   );
 
-  const visible = tables?.filter((t) => activeZone === "all" || t.zone_id === activeZone) ?? [];
+  const showWeekendTables = isWeekendNow();
+  const visible =
+    tables?.filter(
+      (t) =>
+        (activeZone === "all" || t.zone_id === activeZone) &&
+        (!t.weekend_only || showWeekendTables),
+    ) ?? [];
 
   return (
     <WaiterShell title="Mesas">

@@ -41,13 +41,14 @@ export async function createTable(input: {
   code: string;
   seats: number;
   zone_id?: string | null;
+  weekend_only?: boolean;
 }): Promise<TableOut> {
   return request<TableOut>("/floor/tables", { method: "POST", body: input });
 }
 
 export async function updateTable(
   tableId: string,
-  input: { code?: string; seats?: number; zone_id?: string },
+  input: { code?: string; seats?: number; zone_id?: string; weekend_only?: boolean },
 ): Promise<TableOut> {
   return request<TableOut>(`/floor/tables/${tableId}`, { method: "PATCH", body: input });
 }

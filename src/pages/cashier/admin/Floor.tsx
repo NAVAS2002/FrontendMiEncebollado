@@ -204,14 +204,21 @@ function AddTableInline({
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [seats, setSeats] = useState("4");
+  const [weekendOnly, setWeekendOnly] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function submit() {
     if (!code.trim()) return;
     setBusy(true);
     try {
-      await createTable({ code: code.trim(), seats: Number(seats) || 4, zone_id: zoneId });
+      await createTable({
+        code: code.trim(),
+        seats: Number(seats) || 4,
+        zone_id: zoneId,
+        weekend_only: weekendOnly,
+      });
       setCode("");
+      setWeekendOnly(false);
       setOpen(false);
       onChanged();
     } catch (err) {
@@ -255,6 +262,14 @@ function AddTableInline({
           className="w-20 h-10 rounded-lg border border-outline-variant bg-surface px-3 font-body-md text-body-md outline-none focus:ring-2 focus:ring-tertiary"
         />
       </div>
+      <label className="flex items-center gap-1 font-body-md text-[13px] text-on-surface-variant h-10">
+        <input
+          type="checkbox"
+          checked={weekendOnly}
+          onChange={(e) => setWeekendOnly(e.target.checked)}
+        />
+        Solo fin de semana
+      </label>
       <button
         onClick={submit}
         disabled={busy || !code.trim()}
@@ -287,6 +302,7 @@ function TableRow({
   const [code, setCode] = useState(table.code);
   const [seats, setSeats] = useState(String(table.seats));
   const [zoneId, setZoneId] = useState(table.zone_id ?? "");
+  const [weekendBusy, setWeekendBusy] = useState(false);
 
   async function save() {
     try {
@@ -299,6 +315,18 @@ function TableRow({
       onChanged();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : "No se pudo actualizar la mesa.");
+    }
+  }
+
+  async function toggleWeekendOnly() {
+    setWeekendBusy(true);
+    try {
+      await updateTable(table.id, { weekend_only: !table.weekend_only });
+      onChanged();
+    } catch (err) {
+      onError(err instanceof ApiError ? err.message : "No se pudo cambiar la mesa.");
+    } finally {
+      setWeekendBusy(false);
     }
   }
 
@@ -359,8 +387,24 @@ function TableRow({
         <span className="font-body-md text-[13px] text-on-surface-variant ml-2">
           {table.seats} puestos · {table.status}
         </span>
+        {table.weekend_only && (
+          <span className="ml-2 inline-flex items-center gap-0.5 font-label-caps text-[11px] text-tertiary">
+            <Icon name="weekend" className="text-[13px]" /> Fin de semana
+          </span>
+        )}
       </div>
       <div className="flex items-center gap-1">
+        <button
+          onClick={toggleWeekendOnly}
+          disabled={weekendBusy}
+          className={`h-8 w-8 flex items-center justify-center rounded-full disabled:opacity-50 ${
+            table.weekend_only ? "text-tertiary" : "text-on-surface-variant"
+          }`}
+          aria-label="Solo fin de semana"
+          title={table.weekend_only ? "Quitar 'solo fin de semana'" : "Marcar 'solo fin de semana'"}
+        >
+          <Icon name="weekend" className="text-[16px]" />
+        </button>
         <button onClick={() => setEditing(true)} className="text-on-surface-variant">
           <Icon name="edit" className="text-[16px]" />
         </button>
@@ -384,14 +428,21 @@ function NewTableCard({
   const [code, setCode] = useState("");
   const [seats, setSeats] = useState("4");
   const [zoneId, setZoneId] = useState(zones[0]?.id ?? "");
+  const [weekendOnly, setWeekendOnly] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function submit() {
     if (!code.trim()) return;
     setBusy(true);
     try {
-      await createTable({ code: code.trim(), seats: Number(seats) || 4, zone_id: zoneId || null });
+      await createTable({
+        code: code.trim(),
+        seats: Number(seats) || 4,
+        zone_id: zoneId || null,
+        weekend_only: weekendOnly,
+      });
       setCode("");
+      setWeekendOnly(false);
       onChanged();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : "No se pudo crear la mesa.");
@@ -437,6 +488,14 @@ function NewTableCard({
             ))}
           </select>
         </div>
+        <label className="flex items-center gap-1 font-body-md text-body-md text-on-surface-variant h-11">
+          <input
+            type="checkbox"
+            checked={weekendOnly}
+            onChange={(e) => setWeekendOnly(e.target.checked)}
+          />
+          Solo fin de semana
+        </label>
         <button
           onClick={submit}
           disabled={busy || !code.trim()}

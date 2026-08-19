@@ -18,3 +18,11 @@ export function todayIsoDate(): string {
   const local = new Date(d.getTime() - offset * 60000);
   return local.toISOString().slice(0, 10);
 }
+
+/** Sábado o domingo, hora local del dispositivo. Es solo para decidir qué
+ * mesas mostrar (mesas "de fin de semana"): no afecta dinero ni pedidos,
+ * así que no hace falta que lo calcule el servidor. */
+export function isWeekendNow(): boolean {
+  const day = new Date().getDay();
+  return day === 0 || day === 6;
+}

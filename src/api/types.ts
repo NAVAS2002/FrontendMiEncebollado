@@ -93,6 +93,7 @@ export interface TableOut {
   seats: number;
   status: TableStatus;
   current_order_id: string | null;
+  weekend_only: boolean;
 }
 
 export interface ZoneOut {
