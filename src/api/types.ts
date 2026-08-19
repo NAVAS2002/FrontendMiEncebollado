@@ -133,6 +133,7 @@ export interface OrderLineOut {
   prints_to_kitchen: boolean;
   to_go: boolean;
   own_container: boolean;
+  prepared: boolean;
   modifiers: LineModifierOut[];
 }
 

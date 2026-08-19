@@ -147,7 +147,11 @@ function OrderCard({
 }) {
   const minutes = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 60000);
   const urgent = minutes >= URGENT_MINUTES;
-  const kitchenLines = order.lines.filter((l) => l.prints_to_kitchen);
+  // Un pedido reabierto (se agregó algo nuevo después de LISTO) mezcla
+  // líneas ya preparadas con la nueva: las preparadas se muestran aparte,
+  // atenuadas, para que cocina solo se fije en lo que de verdad falta.
+  const pendingLines = order.lines.filter((l) => l.prints_to_kitchen && !l.prepared);
+  const preparedLines = order.lines.filter((l) => l.prints_to_kitchen && l.prepared);
 
   return (
     <div
@@ -171,7 +175,7 @@ function OrderCard({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        {kitchenLines.map((line) => (
+        {pendingLines.map((line) => (
           <div key={line.id} className="font-body-md text-body-md">
             <span className="font-numeric-pin">{line.quantity}×</span> {line.name}
             {line.to_go && (
@@ -189,6 +193,16 @@ function OrderCard({
             )}
           </div>
         ))}
+        {preparedLines.length > 0 && (
+          <div className="flex flex-col gap-1 pt-1.5 border-t border-outline-variant opacity-50">
+            {preparedLines.map((line) => (
+              <div key={line.id} className="flex items-center gap-1 font-body-md text-[13px] text-on-surface-variant">
+                <Icon name="check_circle" className="text-[14px]" />
+                <span className="font-numeric-pin">{line.quantity}×</span> {line.name}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {onAdvance && nextStatus && (
