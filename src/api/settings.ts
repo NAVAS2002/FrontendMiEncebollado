@@ -10,6 +10,7 @@ export interface SettingsOut {
   takeaway_surcharge_enabled: boolean;
   takeaway_surcharge: string;
   require_transfer_receipt: boolean;
+  card_payment_enabled: boolean;
 }
 
 export type SettingsPatch = Partial<SettingsOut>;

@@ -32,13 +32,17 @@ export default function Checkout() {
   const [method, setMethod] = useState<PaymentMethod>("EFECTIVO");
   const [receivedRaw, setReceivedRaw] = useState("");
   const [requireReceipt, setRequireReceipt] = useState(false);
+  const [cardPaymentEnabled, setCardPaymentEnabled] = useState(true);
   const [receiptId, setReceiptId] = useState<string | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
 
   useEffect(() => {
     getSettings()
-      .then((s) => setRequireReceipt(s.require_transfer_receipt))
+      .then((s) => {
+        setRequireReceipt(s.require_transfer_receipt);
+        setCardPaymentEnabled(s.card_payment_enabled);
+      })
       .catch(() => {});
   }, []);
 
@@ -75,6 +79,7 @@ export default function Checkout() {
     );
   }
 
+  const visibleMethods = METHODS.filter((m) => m.value !== "TARJETA" || cardPaymentEnabled);
   const alreadyPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
   const pending = Math.max(0, Number(order.total) - alreadyPaid);
   const received = parseMoneyInput(receivedRaw);
@@ -208,8 +213,8 @@ export default function Checkout() {
           </div>
         ) : (
           <div className="flex flex-col gap-stack-md">
-            <div className="grid grid-cols-3 gap-stack-sm">
-              {METHODS.map((m) => (
+            <div className={`grid gap-stack-sm ${visibleMethods.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+              {visibleMethods.map((m) => (
                 <button
                   key={m.value}
                   onClick={() => setMethod(m.value)}

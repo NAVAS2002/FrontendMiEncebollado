@@ -46,6 +46,7 @@ export default function Settings() {
 
         <TaxCard settings={settings} onSave={save} />
         <SurchargeCard settings={settings} onSave={save} />
+        <CardPaymentCard settings={settings} onSave={save} />
         <TransferReceiptCard settings={settings} onSave={save} />
         <BusinessInfoCard settings={settings} onSave={save} />
       </div>
@@ -205,6 +206,48 @@ function SurchargeCard({
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function CardPaymentCard({
+  settings,
+  onSave,
+}: {
+  settings: SettingsOut;
+  onSave: (patch: Partial<SettingsOut>) => Promise<void>;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  async function toggle() {
+    setBusy(true);
+    await onSave({ card_payment_enabled: !settings.card_payment_enabled });
+    setBusy(false);
+  }
+
+  return (
+    <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-stack-md">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-headline-md text-headline-md">Pago con tarjeta</h2>
+          <p className="font-body-md text-[13px] text-on-surface-variant">
+            Desactívalo si por ahora no puedes cobrar con tarjeta (ej. sin datáfono disponible).
+          </p>
+        </div>
+        <button
+          onClick={toggle}
+          disabled={busy}
+          className="flex items-center gap-1 disabled:opacity-50"
+          aria-label="Activar o desactivar pago con tarjeta"
+        >
+          <Icon
+            name={settings.card_payment_enabled ? "toggle_on" : "toggle_off"}
+            className={`text-[36px] ${
+              settings.card_payment_enabled ? "text-tertiary" : "text-on-surface-variant"
+            }`}
+          />
+        </button>
+      </div>
     </div>
   );
 }
