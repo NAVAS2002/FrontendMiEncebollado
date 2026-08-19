@@ -1,5 +1,5 @@
 import { request } from "./client";
-import type { CreateOrderIn, OrderLineIn, OrderOut } from "./types";
+import type { CreateOrderIn, OrderLineIn, OrderOut, OrderStatus } from "./types";
 
 export async function createOrder(input: CreateOrderIn, idempotencyKey: string): Promise<OrderOut> {
   return request<OrderOut>("/orders", { method: "POST", body: input, idempotencyKey });
@@ -33,4 +33,8 @@ export async function removeLine(orderId: string, lineId: string): Promise<Order
 
 export async function changeLineQuantity(orderId: string, lineId: string, quantity: number): Promise<OrderOut> {
   return request<OrderOut>(`/orders/${orderId}/lines/${lineId}`, { method: "PATCH", body: { quantity } });
+}
+
+export async function changeOrderStatus(orderId: string, orderStatus: OrderStatus): Promise<OrderOut> {
+  return request<OrderOut>(`/orders/${orderId}/status`, { method: "PATCH", body: { status: orderStatus } });
 }

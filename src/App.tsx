@@ -12,6 +12,7 @@ import Floor from "./pages/cashier/admin/Floor";
 import Menu from "./pages/cashier/admin/Menu";
 import Settings from "./pages/cashier/admin/Settings";
 import Users from "./pages/cashier/admin/Users";
+import KitchenBoard from "./pages/kitchen/KitchenBoard";
 import DevicePairing from "./pages/waiter/DevicePairing";
 import ProductCustomize from "./pages/waiter/ProductCustomize";
 import TableMap from "./pages/waiter/TableMap";
@@ -60,6 +61,10 @@ export default function App() {
             <Route path="/caja/pagos" element={<Payments />} />
             <Route path="/caja/sesion" element={<CashSessionPage />} />
             <Route path="/caja/reportes" element={<Dashboard />} />
+          </Route>
+
+          <Route element={<ProtectedRoute roles={["KITCHEN", "ADMIN"]} redirectTo="/caja/login" />}>
+            <Route path="/cocina" element={<KitchenBoard />} />
           </Route>
 
           <Route element={<ProtectedRoute roles={["ADMIN"]} redirectTo="/caja/login" />}>

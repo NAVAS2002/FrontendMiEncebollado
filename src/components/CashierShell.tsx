@@ -12,6 +12,7 @@ const LINKS = [
 ];
 
 const ADMIN_LINKS = [
+  { to: "/cocina", icon: "soup_kitchen", label: "Cocina" },
   { to: "/caja/admin/secciones", icon: "table_restaurant", label: "Secciones y mesas" },
   { to: "/caja/admin/catalogo", icon: "restaurant_menu", label: "Catálogo" },
   { to: "/caja/admin/dispositivos", icon: "phonelink_lock", label: "Dispositivos" },

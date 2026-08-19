@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginWithPassword } from "../../api/auth";
 import { ApiError } from "../../api/client";
+import { getSession } from "../../api/session";
 import { AuthHeader } from "../../components/AuthHeader";
 import { Icon } from "../../components/Icon";
 
@@ -18,7 +19,8 @@ export default function CashierLogin() {
     setError(null);
     try {
       await loginWithPassword(username.trim(), password);
-      navigate("/caja/pedidos", { replace: true });
+      const isKitchen = getSession()?.role === "KITCHEN";
+      navigate(isKitchen ? "/cocina" : "/caja/pedidos", { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? "Usuario o contraseña incorrectos." : "No se pudo conectar con el servidor.");
     } finally {
