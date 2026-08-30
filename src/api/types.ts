@@ -1,7 +1,7 @@
 // Tipos espejo de los esquemas Pydantic del backend (ver src/app/modules/*/interfaces/schemas.py).
 // Los importes viajan como string decimal ("3.50"), nunca como number.
 
-export type Role = "ADMIN" | "CASHIER" | "WAITER" | "KITCHEN";
+export type Role = "ADMIN" | "SUBADMIN" | "CASHIER" | "WAITER" | "KITCHEN";
 
 export interface TokenOut {
   access_token: string;
@@ -94,6 +94,7 @@ export interface TableOut {
   status: TableStatus;
   current_order_id: string | null;
   weekend_only: boolean;
+  bill_requested_by_name: string | null;
 }
 
 export interface ZoneOut {

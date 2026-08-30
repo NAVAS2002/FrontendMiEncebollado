@@ -4,8 +4,9 @@ import { listTables, listZones } from "../../api/floor";
 import type { TableOut, ZoneOut } from "../../api/types";
 import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
-import { TableStatusBadge } from "../../components/StatusBadge";
+import { TableTile } from "../../components/TableTile";
 import { WaiterShell } from "../../components/WaiterShell";
+import { groupTablesByZone } from "../../lib/tables";
 import { isWeekendNow } from "../../lib/time";
 import { useRealtime } from "../../state/RealtimeContext";
 
@@ -13,7 +14,6 @@ export default function TableMap() {
   const navigate = useNavigate();
   const [tables, setTables] = useState<TableOut[] | null>(null);
   const [zones, setZones] = useState<ZoneOut[]>([]);
-  const [activeZone, setActiveZone] = useState<string | "all">("all");
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
@@ -34,70 +34,31 @@ export default function TableMap() {
   );
 
   const showWeekendTables = isWeekendNow();
-  const visible =
-    tables?.filter(
-      (t) =>
-        (activeZone === "all" || t.zone_id === activeZone) &&
-        (!t.weekend_only || showWeekendTables),
-    ) ?? [];
+  const visibleTables =
+    tables?.filter((t) => !t.weekend_only || showWeekendTables) ?? [];
+  const sections = groupTablesByZone(visibleTables, zones);
 
   return (
     <WaiterShell title="Mesas">
-      {zones.length > 1 && (
-        <div className="w-full bg-surface border-b border-outline-variant px-margin-mobile flex overflow-x-auto gap-stack-sm py-2 sticky top-[44px] z-30">
-          <button
-            onClick={() => setActiveZone("all")}
-            className={`h-touch-target-min px-4 rounded-full whitespace-nowrap font-headline-md text-headline-md transition-all ${
-              activeZone === "all"
-                ? "bg-primary-container text-on-primary-container"
-                : "bg-surface-container-low text-on-surface-variant"
-            }`}
-          >
-            Todas
-          </button>
-          {zones.map((z) => (
-            <button
-              key={z.id}
-              onClick={() => setActiveZone(z.id)}
-              className={`h-touch-target-min px-4 rounded-full whitespace-nowrap font-headline-md text-headline-md transition-all ${
-                activeZone === z.id
-                  ? "bg-primary-container text-on-primary-container"
-                  : "bg-surface-container-low text-on-surface-variant"
-              }`}
-            >
-              {z.name}
-            </button>
-          ))}
-        </div>
-      )}
-
       {!tables && !error && <Loading label="Cargando mesas…" />}
       {error && <p className="text-error text-center py-8 font-body-md">{error}</p>}
 
       {tables && (
-        <div className="p-margin-mobile grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-gutter">
-          {visible.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => navigate(`/mesero/mesa/${t.id}`)}
-              className="bg-surface-container-lowest border border-surface-variant rounded-lg p-stack-sm flex flex-col items-center justify-between aspect-square active:shadow-inner transition-all relative overflow-hidden"
-            >
-              <div className="w-full flex justify-between items-start mb-2">
-                <span className="font-display-table-num text-display-table-num text-on-surface">
-                  {t.code}
-                </span>
-                <span className="font-label-caps text-label-caps text-on-surface-variant flex items-center">
-                  <Icon name="group" className="text-[16px] mr-1" /> {t.seats}
-                </span>
+        <div className="p-margin-mobile flex flex-col gap-stack-lg">
+          {sections.map((section) => (
+            <section key={section.zone?.id ?? "sin-seccion"}>
+              <h2 className="font-label-caps text-label-caps text-on-surface-variant mb-stack-sm">
+                {section.zone?.name ?? "Sin sección"}
+              </h2>
+              <div className="flex flex-wrap gap-gutter">
+                {section.tables.map((t) => (
+                  <TableTile key={t.id} table={t} onClick={() => navigate(`/mesero/mesa/${t.id}`)} />
+                ))}
               </div>
-              <div className="font-body-md text-body-md text-on-surface-variant mb-2 opacity-0">--</div>
-              <TableStatusBadge status={t.status} />
-            </button>
+            </section>
           ))}
-          {visible.length === 0 && (
-            <p className="col-span-full text-center text-on-surface-variant py-8 font-body-md">
-              No hay mesas en esta zona.
-            </p>
+          {sections.length === 0 && (
+            <p className="text-center text-on-surface-variant py-8 font-body-md">No hay mesas.</p>
           )}
         </div>
       )}

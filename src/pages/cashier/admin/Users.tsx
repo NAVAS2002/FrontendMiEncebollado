@@ -6,7 +6,7 @@ import { CashierShell } from "../../../components/CashierShell";
 import { Icon } from "../../../components/Icon";
 import { Loading } from "../../../components/Loading";
 
-const ROLES: Role[] = ["WAITER", "CASHIER", "KITCHEN", "ADMIN"];
+const ROLES: Role[] = ["WAITER", "CASHIER", "KITCHEN", "SUBADMIN", "ADMIN"];
 
 export default function Users() {
   const [users, setUsers] = useState<UserOut[] | null>(null);
@@ -65,7 +65,7 @@ function CreateUserForm({ onCreated }: { onCreated: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const needsPassword = role === "ADMIN" || role === "CASHIER";
+  const needsPassword = role === "ADMIN" || role === "SUBADMIN" || role === "CASHIER";
 
   async function submit() {
     setBusy(true);

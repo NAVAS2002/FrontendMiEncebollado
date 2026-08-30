@@ -19,8 +19,14 @@ export default function CashierLogin() {
     setError(null);
     try {
       await loginWithPassword(username.trim(), password);
-      const isKitchen = getSession()?.role === "KITCHEN";
-      navigate(isKitchen ? "/cocina" : "/caja/pedidos", { replace: true });
+      const role = getSession()?.role;
+      const destination =
+        role === "KITCHEN"
+          ? "/cocina"
+          : role === "SUBADMIN"
+            ? "/caja/admin/catalogo"
+            : "/caja/pedidos";
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? "Usuario o contraseña incorrectos." : "No se pudo conectar con el servidor.");
     } finally {

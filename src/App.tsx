@@ -67,11 +67,14 @@ export default function App() {
             <Route path="/cocina" element={<KitchenBoard />} />
           </Route>
 
+          <Route element={<ProtectedRoute roles={["ADMIN", "SUBADMIN"]} redirectTo="/caja/login" />}>
+            <Route path="/caja/admin/secciones" element={<Floor />} />
+            <Route path="/caja/admin/catalogo" element={<Menu />} />
+          </Route>
+
           <Route element={<ProtectedRoute roles={["ADMIN"]} redirectTo="/caja/login" />}>
             <Route path="/caja/admin/dispositivos" element={<Devices />} />
             <Route path="/caja/admin/usuarios" element={<Users />} />
-            <Route path="/caja/admin/secciones" element={<Floor />} />
-            <Route path="/caja/admin/catalogo" element={<Menu />} />
             <Route path="/caja/admin/configuracion" element={<Settings />} />
           </Route>
 

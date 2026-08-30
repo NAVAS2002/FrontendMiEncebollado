@@ -1,23 +1,24 @@
 import type { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { hasPermission } from "../api/session";
 import { Icon } from "./Icon";
 import { StoreLogo } from "./StoreLogo";
 import { useAuth } from "../state/AuthContext";
 
 const LINKS = [
-  { to: "/caja/pedidos", icon: "receipt_long", label: "Pedidos" },
-  { to: "/caja/pagos", icon: "payments", label: "Pagos" },
-  { to: "/caja/sesion", icon: "point_of_sale", label: "Caja" },
-  { to: "/caja/reportes", icon: "monitoring", label: "Reportes" },
+  { to: "/caja/pedidos", icon: "receipt_long", label: "Pedidos", permission: "order.read" },
+  { to: "/caja/pagos", icon: "payments", label: "Pagos", permission: "payment.create" },
+  { to: "/caja/sesion", icon: "point_of_sale", label: "Caja", permission: "cash_session.read" },
+  { to: "/caja/reportes", icon: "monitoring", label: "Reportes", permission: "report.daily" },
 ];
 
 const ADMIN_LINKS = [
-  { to: "/cocina", icon: "soup_kitchen", label: "Cocina" },
-  { to: "/caja/admin/secciones", icon: "table_restaurant", label: "Secciones y mesas" },
-  { to: "/caja/admin/catalogo", icon: "restaurant_menu", label: "Catálogo" },
-  { to: "/caja/admin/dispositivos", icon: "phonelink_lock", label: "Dispositivos" },
-  { to: "/caja/admin/usuarios", icon: "group", label: "Usuarios" },
-  { to: "/caja/admin/configuracion", icon: "settings", label: "Configuración" },
+  { to: "/cocina", icon: "soup_kitchen", label: "Cocina", permission: "order.status" },
+  { to: "/caja/admin/secciones", icon: "table_restaurant", label: "Secciones y mesas", permission: "table.write" },
+  { to: "/caja/admin/catalogo", icon: "restaurant_menu", label: "Catálogo", permission: "product.write" },
+  { to: "/caja/admin/dispositivos", icon: "phonelink_lock", label: "Dispositivos", permission: "user.manage" },
+  { to: "/caja/admin/usuarios", icon: "group", label: "Usuarios", permission: "user.manage" },
+  { to: "/caja/admin/configuracion", icon: "settings", label: "Configuración", permission: "settings.manage" },
 ];
 
 function SidebarLink({ to, icon, label }: { to: string; icon: string; label: string }) {
@@ -41,7 +42,8 @@ function SidebarLink({ to, icon, label }: { to: string; icon: string; label: str
 export function CashierShell({ title, children }: { title: string; children: ReactNode }) {
   const navigate = useNavigate();
   const { session, logout } = useAuth();
-  const isAdmin = session?.role === "ADMIN";
+  const links = LINKS.filter((l) => hasPermission(l.permission));
+  const adminLinks = ADMIN_LINKS.filter((l) => hasPermission(l.permission));
 
   return (
     <div className="h-dvh flex bg-background text-on-background overflow-hidden">
@@ -50,13 +52,13 @@ export function CashierShell({ title, children }: { title: string; children: Rea
           <StoreLogo size="sm" />
           <span className="font-headline-md text-headline-md text-on-surface">MI ENCEBOLLADO</span>
         </div>
-        {LINKS.map((l) => (
+        {links.map((l) => (
           <SidebarLink key={l.to} {...l} />
         ))}
-        {isAdmin && (
+        {adminLinks.length > 0 && (
           <>
             <p className="font-label-caps text-label-caps text-on-surface-variant px-4 mt-stack-md">Administración</p>
-            {ADMIN_LINKS.map((l) => (
+            {adminLinks.map((l) => (
               <SidebarLink key={l.to} {...l} />
             ))}
           </>
@@ -90,22 +92,24 @@ export function CashierShell({ title, children }: { title: string; children: Rea
         </header>
         <main className="flex-1 min-w-0 overflow-y-auto pb-20 md:pb-0">{children}</main>
 
-        <nav className="md:hidden fixed bottom-0 w-full z-50 bg-surface-container flex justify-around items-center h-16 px-2 safe-bottom">
-          {LINKS.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              className={({ isActive }) =>
-                `flex flex-col items-center justify-center px-4 py-1 rounded-full font-label-caps text-label-caps transition-all ${
-                  isActive ? "bg-tertiary-container text-on-tertiary-container" : "text-on-surface-variant"
-                }`
-              }
-            >
-              <Icon name={l.icon} className="mb-1" />
-              {l.label}
-            </NavLink>
-          ))}
-        </nav>
+        {links.length > 0 && (
+          <nav className="md:hidden fixed bottom-0 w-full z-50 bg-surface-container flex justify-around items-center h-16 px-2 safe-bottom">
+            {links.map((l) => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                className={({ isActive }) =>
+                  `flex flex-col items-center justify-center px-4 py-1 rounded-full font-label-caps text-label-caps transition-all ${
+                    isActive ? "bg-tertiary-container text-on-tertiary-container" : "text-on-surface-variant"
+                  }`
+                }
+              >
+                <Icon name={l.icon} className="mb-1" />
+                {l.label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
       </div>
     </div>
   );
