@@ -127,7 +127,7 @@ export default function TableOrder() {
             </h2>
             <OrderStatusBadge status={order.status} />
           </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl divide-y divide-outline-variant">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl divide-y divide-outline-variant shadow-sm">
             {order.lines.map((line) => (
               <div key={line.id} className="p-stack-md flex justify-between">
                 <div>

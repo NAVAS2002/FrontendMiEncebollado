@@ -67,7 +67,7 @@ export default function WaiterLogin() {
 
   if (!selected) {
     return (
-      <div className="min-h-dvh bg-surface flex flex-col items-center px-margin-mobile pt-16 pb-24">
+      <div className="min-h-dvh bg-surface flex flex-col items-center px-margin-mobile pt-16 pb-24 animate-fade-in">
         <AuthHeader title="MI ENCEBOLLADO" onBack={() => navigate("/")} />
         <h2 className="font-headline-lg-mobile text-headline-lg-mobile mb-stack-lg mt-stack-lg">¿Quién eres?</h2>
         <div className="w-full max-w-md grid grid-cols-2 gap-gutter">
@@ -80,7 +80,7 @@ export default function WaiterLogin() {
             <button
               key={w.id}
               onClick={() => setSelected(w)}
-              className="flex flex-col items-center justify-center gap-2 h-28 rounded-xl bg-surface-container-lowest border border-outline-variant active:bg-surface-variant transition-all"
+              className="flex flex-col items-center justify-center gap-2 h-28 rounded-xl bg-surface-container-lowest border border-outline-variant shadow-sm hover:shadow-md active:scale-[0.97] active:bg-surface-variant transition-all duration-200"
             >
               <span className="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-md text-headline-md">
                 {w.full_name.charAt(0)}
@@ -96,7 +96,7 @@ export default function WaiterLogin() {
   }
 
   return (
-    <div className="bg-surface text-on-surface h-dvh w-screen flex flex-col items-center justify-center overflow-hidden antialiased select-none">
+    <div className="bg-surface text-on-surface h-dvh w-screen flex flex-col items-center justify-center overflow-hidden antialiased select-none animate-fade-in">
       <AuthHeader
         title="MI ENCEBOLLADO"
         onBack={() => {
@@ -135,7 +135,7 @@ export default function WaiterLogin() {
               <button
                 key={key}
                 onClick={() => press(key)}
-                className="aspect-square rounded-lg bg-surface-container border border-surface-variant text-on-surface font-label-caps text-label-caps flex items-center justify-center active:bg-surface-variant transition-all"
+                className="aspect-square rounded-lg bg-surface-container border border-surface-variant text-on-surface font-label-caps text-label-caps flex items-center justify-center active:scale-90 active:bg-surface-variant transition-all duration-150"
               >
                 CLR
               </button>
@@ -143,7 +143,7 @@ export default function WaiterLogin() {
               <button
                 key={key}
                 onClick={() => press(key)}
-                className="aspect-square rounded-lg bg-primary text-on-primary flex items-center justify-center active:bg-on-primary-fixed-variant transition-all shadow-md"
+                className="aspect-square rounded-lg bg-primary text-on-primary flex items-center justify-center active:scale-90 active:bg-on-primary-fixed-variant transition-all duration-150 shadow-md"
               >
                 <Icon name="backspace" />
               </button>
@@ -151,7 +151,7 @@ export default function WaiterLogin() {
               <button
                 key={key}
                 onClick={() => press(key)}
-                className="aspect-square rounded-lg bg-surface-container-lowest border border-surface-variant text-on-surface font-numeric-pin text-numeric-pin flex items-center justify-center active:bg-surface-variant transition-all shadow-sm"
+                className="aspect-square rounded-lg bg-surface-container-lowest border border-surface-variant text-on-surface font-numeric-pin text-numeric-pin flex items-center justify-center active:scale-90 active:bg-surface-variant transition-all duration-150 shadow-sm"
               >
                 {key}
               </button>

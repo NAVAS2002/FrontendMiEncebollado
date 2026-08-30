@@ -34,7 +34,7 @@ export function CartBar({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 left-margin-mobile right-margin-mobile h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-between px-6 z-40 active:scale-[0.98] transition-all"
+        className="fixed bottom-24 left-margin-mobile right-margin-mobile h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-between px-6 z-40 active:scale-[0.98] transition-transform animate-pop-in"
       >
         <span className="flex items-center gap-2 font-headline-md text-headline-md">
           <Icon name="shopping_cart" filled />
@@ -45,7 +45,7 @@ export function CartBar({
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[60] bg-surface flex flex-col">
+        <div className="fixed inset-0 z-[60] bg-surface flex flex-col animate-sheet-in">
           <header className="flex items-center justify-between px-margin-mobile h-touch-target-min border-b border-outline-variant">
             <button
               onClick={() => setOpen(false)}
@@ -62,7 +62,7 @@ export function CartBar({
             {cart.lines.map((line) => (
               <div
                 key={line.cartId}
-                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-1"
+                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-1 shadow-sm animate-slide-up-fade"
               >
                 <div className="flex justify-between items-start">
                   <span className="font-body-md text-body-md text-on-surface font-medium">
@@ -94,7 +94,7 @@ export function CartBar({
                   <div className="flex items-center bg-surface-container rounded-full h-9 border border-outline-variant">
                     <button
                       onClick={() => cart.updateQuantity(line.cartId, line.quantity - 1)}
-                      className="w-9 h-full flex items-center justify-center"
+                      className="w-9 h-full flex items-center justify-center rounded-full active:scale-90 active:bg-surface-dim transition-all duration-150"
                     >
                       <Icon name="remove" className="text-[18px]" />
                     </button>
@@ -103,7 +103,7 @@ export function CartBar({
                     </span>
                     <button
                       onClick={() => cart.updateQuantity(line.cartId, line.quantity + 1)}
-                      className="w-9 h-full flex items-center justify-center"
+                      className="w-9 h-full flex items-center justify-center rounded-full active:scale-90 active:bg-surface-dim transition-all duration-150"
                     >
                       <Icon name="add" className="text-[18px]" />
                     </button>

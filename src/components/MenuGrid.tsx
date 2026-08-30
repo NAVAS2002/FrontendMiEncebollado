@@ -41,7 +41,7 @@ export function MenuGrid({ menu, returnTo }: { menu: MenuOut; returnTo: string }
         ))}
       </div>
 
-      <div className="p-margin-mobile grid grid-cols-2 sm:grid-cols-3 gap-gutter">
+      <div className="p-margin-mobile grid grid-cols-2 sm:grid-cols-3 gap-gutter animate-fade-in">
         {products.map((p) => {
           const price = displayPrice(p);
           return (
@@ -49,7 +49,7 @@ export function MenuGrid({ menu, returnTo }: { menu: MenuOut; returnTo: string }
               key={p.id}
               disabled={!p.is_available}
               onClick={() => navigate(`/mesero/producto/${p.id}`, { state: { returnTo } })}
-              className="flex flex-col items-start text-left bg-surface-container-lowest border border-surface-variant rounded-lg p-stack-md gap-1 active:shadow-inner transition-all disabled:opacity-40"
+              className="flex flex-col items-start text-left bg-surface-container-lowest border border-surface-variant rounded-lg p-stack-md gap-1 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-inner active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:shadow-none disabled:translate-y-0"
             >
               <span className="font-body-md text-body-md text-on-surface font-medium">{p.name}</span>
               {p.description && (

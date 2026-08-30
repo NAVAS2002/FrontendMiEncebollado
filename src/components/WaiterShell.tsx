@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "./Icon";
 import { StoreLogo } from "./StoreLogo";
 import { useAuth } from "../state/AuthContext";
 
 export function WaiterShell({ title, children }: { title: string; children: ReactNode }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { session, logout } = useAuth();
 
   return (
@@ -31,23 +32,47 @@ export function WaiterShell({ title, children }: { title: string; children: Reac
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col">{children}</main>
+      <main className="flex-grow flex flex-col animate-fade-in">{children}</main>
 
       <nav className="fixed bottom-0 w-full z-50 bg-surface-container flex justify-around items-center h-16 px-2 safe-bottom">
-        <NavButton icon="grid_view" label="Mesas" onClick={() => navigate("/mesero/mesas")} />
-        <NavButton icon="local_mall" label="Llevar" onClick={() => navigate("/mesero/llevar")} />
+        <NavButton
+          icon="grid_view"
+          label="Mesas"
+          active={location.pathname.startsWith("/mesero/mesa")}
+          onClick={() => navigate("/mesero/mesas")}
+        />
+        <NavButton
+          icon="local_mall"
+          label="Llevar"
+          active={location.pathname === "/mesero/llevar"}
+          onClick={() => navigate("/mesero/llevar")}
+        />
       </nav>
     </div>
   );
 }
 
-function NavButton({ icon, label, onClick }: { icon: string; label: string; onClick: () => void }) {
+function NavButton({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: string;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-all px-4 py-1 rounded-full font-label-caps text-label-caps"
+      className={`flex flex-col items-center justify-center transition-all duration-200 px-4 py-1 rounded-full font-label-caps text-label-caps ${
+        active
+          ? "text-primary bg-primary-container/40"
+          : "text-on-surface-variant hover:bg-surface-variant"
+      }`}
     >
-      <Icon name={icon} className="mb-1" />
+      <Icon name={icon} filled={active} className="mb-1" />
       <span>{label}</span>
     </button>
   );

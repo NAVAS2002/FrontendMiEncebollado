@@ -17,7 +17,7 @@ const TABLE_CLASS: Record<TableStatus, string> = {
 export function TableStatusBadge({ status }: { status: TableStatus }) {
   return (
     <div
-      className={`font-label-caps text-label-caps w-full py-1 text-center rounded-full mt-auto ${TABLE_CLASS[status]}`}
+      className={`font-label-caps text-label-caps w-full py-1 text-center rounded-full mt-auto transition-colors duration-300 ${TABLE_CLASS[status]}`}
     >
       {TABLE_LABEL[status]}
     </div>
@@ -51,7 +51,7 @@ const ORDER_CLASS: Record<OrderStatus, string> = {
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   return (
     <span
-      className={`font-label-caps text-label-caps px-3 py-1.5 rounded-full inline-block ${ORDER_CLASS[status]}`}
+      className={`font-label-caps text-label-caps px-3 py-1.5 rounded-full inline-block transition-colors duration-300 ${ORDER_CLASS[status]}`}
     >
       {ORDER_LABEL[status]}
     </span>

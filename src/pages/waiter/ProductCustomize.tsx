@@ -80,7 +80,7 @@ export default function ProductCustomize() {
   }
 
   return (
-    <div className="bg-surface text-on-surface antialiased pb-32 min-h-dvh">
+    <div className="bg-surface text-on-surface antialiased pb-32 min-h-dvh animate-fade-in">
       <header className="flex items-center justify-between px-margin-mobile h-touch-target-min bg-surface sticky top-0 z-40 border-b border-outline-variant shadow-sm">
         <button
           onClick={() => navigate(returnTo)}
@@ -168,11 +168,11 @@ export default function ProductCustomize() {
                 return (
                   <label
                     key={m.id}
-                    className={`flex items-center justify-between p-stack-md bg-surface-container-lowest border rounded-xl transition-colors ${
+                    className={`flex items-center justify-between p-stack-md bg-surface-container-lowest border rounded-xl transition-all duration-150 active:scale-[0.99] ${
                       !m.is_available
                         ? "opacity-40 cursor-not-allowed"
                         : isSelected
-                          ? "border-primary cursor-pointer"
+                          ? "border-primary shadow-sm cursor-pointer"
                           : "border-outline-variant cursor-pointer"
                     }`}
                   >
@@ -208,8 +208,8 @@ export default function ProductCustomize() {
         {product.prints_to_kitchen && !isTakeAwayOrder && !product.custom_price_allowed && (
           <section className="px-margin-mobile mb-stack-lg">
             <label
-              className={`flex items-center justify-between p-stack-md bg-surface-container-lowest border rounded-xl cursor-pointer transition-colors ${
-                toGo ? "border-primary" : "border-outline-variant"
+              className={`flex items-center justify-between p-stack-md bg-surface-container-lowest border rounded-xl cursor-pointer transition-all duration-150 active:scale-[0.99] ${
+                toGo ? "border-primary shadow-sm" : "border-outline-variant"
               }`}
             >
               <span className="flex items-center gap-2">

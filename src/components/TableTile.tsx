@@ -32,13 +32,17 @@ export function TableTile({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`bg-surface-container-lowest border p-stack-sm flex flex-col items-center justify-between transition-all relative overflow-hidden shrink-0 disabled:opacity-60 ${tileSizeClass(
+      className={`bg-surface-container-lowest border p-stack-sm flex flex-col items-center justify-between shadow-sm transition-all duration-200 relative overflow-hidden shrink-0 disabled:opacity-60 disabled:shadow-none ${tileSizeClass(
         table.seats,
       )} ${
         highlight
           ? "border-warning border-2 shadow-[0_0_0_3px_rgba(230,150,20,0.15)]"
           : "border-surface-variant"
-      } ${onClick && !disabled ? "active:shadow-inner cursor-pointer" : "cursor-default"}`}
+      } ${
+        onClick && !disabled
+          ? "cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-inner active:scale-[0.98]"
+          : "cursor-default"
+      }`}
     >
       <div className="w-full flex justify-between items-start">
         <span className="font-display-table-num text-display-table-num text-on-surface">{table.code}</span>

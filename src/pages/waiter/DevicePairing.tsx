@@ -39,7 +39,7 @@ export default function DevicePairing() {
   }
 
   return (
-    <div className="min-h-dvh bg-surface flex flex-col items-center justify-center px-margin-mobile">
+    <div className="min-h-dvh bg-surface flex flex-col items-center justify-center px-margin-mobile animate-fade-in">
       <AuthHeader title="MI ENCEBOLLADO" onBack={() => navigate("/")} />
       <Icon name="phonelink_lock" className="text-4xl text-primary mb-stack-md mt-16" />
       <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-center mb-stack-sm">

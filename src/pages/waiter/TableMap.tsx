@@ -65,7 +65,7 @@ export default function TableMap() {
 
       <button
         onClick={() => navigate("/mesero/llevar")}
-        className="fixed bottom-[88px] right-margin-mobile h-14 px-6 bg-primary text-on-primary rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex items-center gap-2 active:scale-95 transition-all z-40"
+        className="fixed bottom-[88px] right-margin-mobile h-14 px-6 bg-primary text-on-primary rounded-full shadow-lg hover:shadow-xl flex items-center gap-2 active:scale-95 transition-all duration-200 z-40"
       >
         <Icon name="add_shopping_cart" filled />
         <span className="font-headline-md text-headline-md">Llevar</span>

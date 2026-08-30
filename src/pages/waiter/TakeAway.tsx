@@ -3,6 +3,7 @@ import { ApiError } from "../../api/client";
 import { createOrder, listOpenOrders } from "../../api/orders";
 import type { OrderOut } from "../../api/types";
 import { CartBar } from "../../components/CartBar";
+import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
 import { MenuGrid } from "../../components/MenuGrid";
 import { OrderStatusBadge } from "../../components/StatusBadge";
@@ -78,7 +79,8 @@ export default function TakeAway() {
   return (
     <WaiterShell title="Para llevar">
       {confirmedNumber !== null && (
-        <div className="mx-margin-mobile mt-stack-md bg-success-container text-success rounded-xl p-stack-md font-body-md text-body-md flex items-center gap-2">
+        <div className="mx-margin-mobile mt-stack-md bg-success-container text-success rounded-xl p-stack-md font-body-md text-body-md flex items-center gap-2 shadow-sm animate-slide-up-fade">
+          <Icon name="check_circle" filled className="text-[20px]" />
           Pedido #{confirmedNumber} enviado a cocina. Está pendiente de pago en caja.
         </div>
       )}
@@ -91,7 +93,7 @@ export default function TakeAway() {
             {recent.map((o) => (
               <div
                 key={o.id}
-                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex items-center justify-between"
+                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex items-center justify-between shadow-sm"
               >
                 <div>
                   <p className="font-body-md text-body-md text-on-surface">
