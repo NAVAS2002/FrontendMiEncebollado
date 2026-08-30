@@ -231,6 +231,14 @@ export interface PaymentResultOut {
   payment: PaymentOut;
 }
 
+/** Para dividir la cuenta: cuánta cantidad de cada línea ya está cobrada. */
+export interface LineStatusOut {
+  order_line_id: string;
+  name: string;
+  quantity: number;
+  paid_quantity: number;
+}
+
 // --- Reportes ---
 export interface DailyTotalsOut {
   business_date: string;

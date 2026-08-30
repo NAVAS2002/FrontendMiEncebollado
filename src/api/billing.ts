@@ -4,6 +4,7 @@ import { getSession } from "./session";
 import type {
   CashSessionOut,
   CashSummaryOut,
+  LineStatusOut,
   PaymentMethod,
   PaymentOut,
   PaymentResultOut,
@@ -51,6 +52,7 @@ export async function registerPayment(
     received?: string;
     reference?: string;
     receipt_id?: string;
+    lines?: { order_line_id: string; quantity: number }[];
   },
   idempotencyKey: string,
 ): Promise<PaymentResultOut> {
@@ -63,6 +65,11 @@ export async function registerPayment(
 
 export async function listPaymentsForOrder(orderId: string): Promise<PaymentOut[]> {
   return request<PaymentOut[]>(`/billing/orders/${orderId}/payments`);
+}
+
+/** Para dividir la cuenta: cuánto de cada línea ya se cobró. */
+export async function getLinesStatus(orderId: string): Promise<LineStatusOut[]> {
+  return request<LineStatusOut[]>(`/billing/orders/${orderId}/lines-status`);
 }
 
 export async function listPaymentsByDate(
