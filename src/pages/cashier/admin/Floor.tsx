@@ -6,12 +6,14 @@ import {
   deleteZone,
   listTables,
   listZones,
+  moveTable,
   renameZone,
   updateTable,
 } from "../../../api/floor";
 import { ApiError } from "../../../api/client";
 import type { TableOut, ZoneOut } from "../../../api/types";
 import { CashierShell } from "../../../components/CashierShell";
+import { FloorPlanCanvas } from "../../../components/FloorPlanCanvas";
 import { Icon } from "../../../components/Icon";
 import { Loading } from "../../../components/Loading";
 
@@ -175,6 +177,25 @@ function ZoneCard({
           </div>
         )}
       </div>
+
+      {tables.length > 0 && (
+        <div>
+          <p className="font-label-caps text-label-caps text-on-surface-variant mb-1 flex items-center gap-1">
+            <Icon name="drag_pan" className="text-[14px]" /> Arrastra cada mesa a su lugar real
+          </p>
+          <FloorPlanCanvas
+            tables={tables}
+            editable
+            onMove={(tableId, posX, posY) => {
+              moveTable(tableId, posX, posY)
+                .then(onChanged)
+                .catch((err) =>
+                  onError(err instanceof ApiError ? err.message : "No se pudo mover la mesa."),
+                );
+            }}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-stack-sm">
         {tables.map((t) => (

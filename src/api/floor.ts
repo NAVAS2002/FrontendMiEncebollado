@@ -56,3 +56,11 @@ export async function updateTable(
 export async function deleteTable(tableId: string): Promise<void> {
   await request<void>(`/floor/tables/${tableId}`, { method: "DELETE" });
 }
+
+/** Guarda dónde quedó la mesa tras arrastrarla en el editor de plano. */
+export async function moveTable(tableId: string, posX: number, posY: number): Promise<TableOut> {
+  return request<TableOut>(`/floor/tables/${tableId}/move`, {
+    method: "POST",
+    body: { pos_x: posX, pos_y: posY },
+  });
+}

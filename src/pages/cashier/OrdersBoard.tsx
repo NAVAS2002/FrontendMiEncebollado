@@ -4,10 +4,10 @@ import { listTables, listZones } from "../../api/floor";
 import { listOpenOrders } from "../../api/orders";
 import type { OrderOut, TableOut, ZoneOut } from "../../api/types";
 import { CashierShell } from "../../components/CashierShell";
+import { FloorPlanCanvas } from "../../components/FloorPlanCanvas";
 import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
 import { OrderStatusBadge } from "../../components/StatusBadge";
-import { TableTile } from "../../components/TableTile";
 import { formatMoney } from "../../lib/money";
 import { groupTablesByZone } from "../../lib/tables";
 import { elapsedShort, isWeekendNow } from "../../lib/time";
@@ -82,23 +82,23 @@ export default function OrdersBoard() {
                   <h3 className="font-label-caps text-label-caps text-on-surface-variant mb-stack-sm">
                     {section.zone?.name ?? "Sin sección"}
                   </h3>
-                  <div className="flex flex-wrap gap-gutter">
-                    {section.tables.map((t) => {
+                  <FloorPlanCanvas
+                    tables={section.tables}
+                    onTableClick={(t) => {
+                      const order = t.current_order_id ? ordersById.get(t.current_order_id) : undefined;
+                      if (order) navigate(`/caja/pedido/${order.id}`);
+                    }}
+                    meta={(t) => {
                       const order = t.current_order_id ? ordersById.get(t.current_order_id) : undefined;
                       const askingBill = t.status === "POR_COBRAR";
-                      return (
-                        <TableTile
-                          key={t.id}
-                          table={t}
-                          onClick={order ? () => navigate(`/caja/pedido/${order.id}`) : undefined}
-                          disabled={!order}
-                          highlight={askingBill}
-                          subtitle={order ? formatMoney(order.total) : undefined}
-                          footnote={askingBill ? t.bill_requested_by_name : null}
-                        />
-                      );
-                    })}
-                  </div>
+                      return {
+                        disabled: !order,
+                        highlight: askingBill,
+                        subtitle: order ? formatMoney(order.total) : undefined,
+                        footnote: askingBill ? t.bill_requested_by_name : null,
+                      };
+                    }}
+                  />
                 </div>
               ))}
             </div>

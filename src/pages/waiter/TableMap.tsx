@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { listTables, listZones } from "../../api/floor";
 import type { TableOut, ZoneOut } from "../../api/types";
+import { FloorPlanCanvas } from "../../components/FloorPlanCanvas";
 import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
-import { TableTile } from "../../components/TableTile";
 import { WaiterShell } from "../../components/WaiterShell";
 import { groupTablesByZone } from "../../lib/tables";
 import { isWeekendNow } from "../../lib/time";
@@ -50,11 +50,10 @@ export default function TableMap() {
               <h2 className="font-label-caps text-label-caps text-on-surface-variant mb-stack-sm">
                 {section.zone?.name ?? "Sin sección"}
               </h2>
-              <div className="flex flex-wrap gap-gutter">
-                {section.tables.map((t) => (
-                  <TableTile key={t.id} table={t} onClick={() => navigate(`/mesero/mesa/${t.id}`)} />
-                ))}
-              </div>
+              <FloorPlanCanvas
+                tables={section.tables}
+                onTableClick={(t) => navigate(`/mesero/mesa/${t.id}`)}
+              />
             </section>
           ))}
           {sections.length === 0 && (

@@ -95,6 +95,8 @@ export interface TableOut {
   current_order_id: string | null;
   weekend_only: boolean;
   bill_requested_by_name: string | null;
+  pos_x: number;
+  pos_y: number;
 }
 
 export interface ZoneOut {
