@@ -201,6 +201,11 @@ export default function Checkout() {
             <p className="font-body-md text-body-md text-on-surface-variant">
               {order.item_count} productos · {new Date(order.created_at).toLocaleTimeString("es-EC")}
             </p>
+            {order.waiter_name && (
+              <p className="font-body-md text-[13px] text-on-surface-variant flex items-center gap-1 mt-0.5">
+                <Icon name="badge" className="text-[15px]" /> Atendido por {order.waiter_name}
+              </p>
+            )}
           </div>
           <OrderStatusBadge status={order.status} />
         </div>

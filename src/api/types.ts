@@ -147,6 +147,7 @@ export interface OrderOut {
   status: OrderStatus;
   table_id: string | null;
   waiter_id: string;
+  waiter_name: string | null;
   note: string | null;
   currency: string;
   subtotal: string;
