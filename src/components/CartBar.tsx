@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useCart } from "../state/CartContext";
 import { formatMoney } from "../lib/money";
 import { Icon } from "./Icon";
@@ -30,7 +31,13 @@ export function CartBar({
 
   if (cart.itemCount === 0) return null;
 
-  return (
+  // Portal directo a <body>: este botón flotante y el panel de pedido son
+  // "fixed" y deben quedar SIEMPRE por encima de todo. Si se renderizaran
+  // como hijos normales de la pantalla, cualquier ancestro con animación,
+  // transform u opacidad (como el fade-in de WaiterShell) crea sin querer
+  // un stacking context nuevo que los atrapa por debajo de la barra de
+  // navegación inferior, aunque su z-index sea más alto.
+  return createPortal(
     <>
       <button
         onClick={() => setOpen(true)}
@@ -138,6 +145,7 @@ export function CartBar({
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body,
   );
 }
