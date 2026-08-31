@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
+import { productImageSrc } from "../../lib/media";
 import { formatMoney } from "../../lib/money";
 import { displayPrice } from "../../lib/pricing";
 import { useCart } from "../../state/CartContext";
@@ -93,6 +94,17 @@ export default function ProductCustomize() {
       </header>
 
       <main className="w-full max-w-2xl mx-auto">
+        {(() => {
+          const imageSrc = productImageSrc(product.image_url);
+          return imageSrc ? (
+            <img
+              src={imageSrc}
+              alt={product.name}
+              className="w-full aspect-[16/10] object-cover bg-surface-container-low"
+            />
+          ) : null;
+        })()}
+
         <div className="bg-surface-container-lowest border-b border-outline-variant mb-stack-md p-margin-mobile">
           <div className="flex justify-between items-start mb-stack-sm">
             <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{product.name}</h2>

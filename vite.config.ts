@@ -26,6 +26,13 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Sin esto, un service worker nuevo se queda "esperando" hasta que
+        // el mesero cierre la app del todo (no solo que la minimice) antes
+        // de activarse — así, un cambio recién desplegado podía tardar
+        // horas en llegarle a alguien que deja la PWA abierta todo el
+        // turno. skipWaiting + clientsClaim lo activa apenas se instala.
+        skipWaiting: true,
+        clientsClaim: true,
         // La verdad siempre se lee por HTTP (regla del backend); el service
         // worker solo cachea el shell de la app para que abra sin red.
         navigateFallbackDenylist: [/^\/api/, /^\/ws/],

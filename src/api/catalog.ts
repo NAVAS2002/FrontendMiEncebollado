@@ -1,4 +1,5 @@
-import { request } from "./client";
+import { API_BASE, ApiError, request } from "./client";
+import { getSession } from "./session";
 import type { CategoryOut, MenuOut, ModifierOut, ProductOut } from "./types";
 
 export async function getMenu(onlyAvailable = false): Promise<MenuOut> {
@@ -68,6 +69,29 @@ export async function setProductAvailability(productId: string, isAvailable: boo
 
 export async function deleteProduct(productId: string): Promise<void> {
   await request<void>(`/catalog/products/${productId}`, { method: "DELETE" });
+}
+
+/** Sube (o reemplaza) la foto de un producto. Mismo patrón que
+ * `uploadReceipt`: multipart, no pasa por `request()` porque eso solo
+ * manda JSON. */
+export async function uploadProductImage(productId: string, file: File): Promise<ProductOut> {
+  const session = getSession();
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${API_BASE}/catalog/products/${productId}/image`, {
+    method: "POST",
+    headers: session ? { Authorization: `Bearer ${session.accessToken}` } : {},
+    body: form,
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(res.status, data?.error?.code ?? "UNKNOWN", data?.error?.message ?? "Error al subir la foto");
+  }
+  return data as ProductOut;
+}
+
+export async function removeProductImage(productId: string): Promise<ProductOut> {
+  return request<ProductOut>(`/catalog/products/${productId}/image`, { method: "DELETE" });
 }
 
 export async function setProductStock(

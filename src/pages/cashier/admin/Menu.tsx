@@ -6,15 +6,18 @@ import {
   deleteProduct,
   listCategories,
   listProducts,
+  removeProductImage,
   renameCategory,
   setProductAvailability,
   updateProduct,
+  uploadProductImage,
 } from "../../../api/catalog";
 import { ApiError } from "../../../api/client";
 import type { CategoryOut, ProductOut } from "../../../api/types";
 import { CashierShell } from "../../../components/CashierShell";
 import { Icon } from "../../../components/Icon";
 import { Loading } from "../../../components/Loading";
+import { productImageSrc } from "../../../lib/media";
 import { formatMoney, parseMoneyInput } from "../../../lib/money";
 import { ProductOptionsPanel } from "./ProductOptionsPanel";
 
@@ -230,6 +233,32 @@ function ProductRow({
   const [categoryId, setCategoryId] = useState(product.category_id);
   const [printsToKitchen, setPrintsToKitchen] = useState(product.prints_to_kitchen);
   const [busy, setBusy] = useState(false);
+  const [imageBusy, setImageBusy] = useState(false);
+
+  async function onPickImage(file: File | undefined) {
+    if (!file) return;
+    setImageBusy(true);
+    try {
+      await uploadProductImage(product.id, file);
+      onChanged();
+    } catch (err) {
+      onError(err instanceof ApiError ? err.message : "No se pudo subir la foto.");
+    } finally {
+      setImageBusy(false);
+    }
+  }
+
+  async function onRemoveImage() {
+    setImageBusy(true);
+    try {
+      await removeProductImage(product.id);
+      onChanged();
+    } catch (err) {
+      onError(err instanceof ApiError ? err.message : "No se pudo quitar la foto.");
+    } finally {
+      setImageBusy(false);
+    }
+  }
 
   async function save() {
     const parsedPrice = noBasePrice || customPriceAllowed ? "0" : parseMoneyInput(price);
@@ -350,9 +379,30 @@ function ProductRow({
     );
   }
 
+  const imageSrc = productImageSrc(product.image_url);
+
   return (
     <div className="border border-outline-variant rounded-lg px-stack-sm py-2 flex items-center justify-between gap-2">
-      <div className="min-w-0">
+      <label className="relative shrink-0 h-12 w-12 rounded-lg overflow-hidden bg-surface-container border border-outline-variant flex items-center justify-center cursor-pointer">
+        {imageSrc ? (
+          <img src={imageSrc} alt={product.name} className="h-full w-full object-cover" />
+        ) : (
+          <Icon name="add_a_photo" className="text-[18px] text-on-surface-variant" />
+        )}
+        {imageBusy && (
+          <span className="absolute inset-0 bg-surface/70 flex items-center justify-center">
+            <Icon name="progress_activity" className="animate-spin text-[16px]" />
+          </span>
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          disabled={imageBusy}
+          onChange={(e) => onPickImage(e.target.files?.[0])}
+        />
+      </label>
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="font-body-md text-body-md font-medium truncate">{product.name}</span>
           <span className="font-numeric-pin text-[14px] text-primary shrink-0">
@@ -388,6 +438,17 @@ function ProductRow({
         </p>
       </div>
       <div className="flex items-center gap-1 shrink-0">
+        {imageSrc && (
+          <button
+            onClick={onRemoveImage}
+            disabled={imageBusy}
+            className="h-8 w-8 flex items-center justify-center text-error hover:bg-error-container rounded-full disabled:opacity-50"
+            aria-label="Quitar foto"
+            title="Quitar foto"
+          >
+            <Icon name="hide_image" className="text-[16px]" />
+          </button>
+        )}
         <button
           onClick={onOpenOptions}
           className="h-8 w-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-full"

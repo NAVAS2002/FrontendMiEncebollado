@@ -67,6 +67,7 @@ export interface ProductOut {
   track_inventory: boolean;
   stock_quantity: number;
   custom_price_allowed: boolean;
+  image_url: string | null;
   modifier_groups: ModifierGroupOut[];
 }
 
