@@ -10,7 +10,7 @@ import { Loading } from "../../components/Loading";
 import { OrderStatusBadge } from "../../components/StatusBadge";
 import { formatMoney } from "../../lib/money";
 import { groupTablesByZone } from "../../lib/tables";
-import { elapsedShort, isWeekendNow } from "../../lib/time";
+import { elapsedShort } from "../../lib/time";
 import { useRealtime } from "../../state/RealtimeContext";
 
 export default function OrdersBoard() {
@@ -47,14 +47,18 @@ export default function OrdersBoard() {
 
   const takeAway = orders?.filter((o) => o.type === "TAKE_AWAY") ?? [];
   const ordersById = new Map((orders ?? []).map((o) => [o.id, o]));
-  const showWeekendTables = isWeekendNow();
+  // Una mesa o sección apagada no se muestra, salvo que tenga un pedido
+  // abierto: eso nunca se esconde, para no perderle el rastro.
+  const enabledZoneIds = new Set(zones.filter((z) => z.is_enabled).map((z) => z.id));
   const visibleTables = (tables ?? []).filter(
     (t) =>
-      // Entre semana se ocultan las mesas "de fin de semana", salvo que
-      // por algún motivo tengan un pedido abierto: ese nunca se esconde.
-      !t.weekend_only || showWeekendTables || t.current_order_id !== null,
+      t.current_order_id !== null ||
+      (t.is_enabled && (t.zone_id === null || enabledZoneIds.has(t.zone_id))),
   );
-  const sections = groupTablesByZone(visibleTables, zones);
+  const visibleZones = zones.filter(
+    (z) => z.is_enabled || visibleTables.some((t) => t.zone_id === z.id),
+  );
+  const sections = groupTablesByZone(visibleTables, visibleZones);
   const askingForBill = (tables ?? []).filter((t) => t.status === "POR_COBRAR").length;
 
   return (

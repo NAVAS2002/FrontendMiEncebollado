@@ -37,18 +37,24 @@ export async function deleteZone(zoneId: string): Promise<void> {
   await request<void>(`/floor/zones/${zoneId}`, { method: "DELETE" });
 }
 
+export async function setZoneEnabled(zoneId: string, isEnabled: boolean): Promise<ZoneOut> {
+  return request<ZoneOut>(`/floor/zones/${zoneId}/enabled`, {
+    method: "POST",
+    body: { is_enabled: isEnabled },
+  });
+}
+
 export async function createTable(input: {
   code: string;
   seats: number;
   zone_id?: string | null;
-  weekend_only?: boolean;
 }): Promise<TableOut> {
   return request<TableOut>("/floor/tables", { method: "POST", body: input });
 }
 
 export async function updateTable(
   tableId: string,
-  input: { code?: string; seats?: number; zone_id?: string; weekend_only?: boolean },
+  input: { code?: string; seats?: number; zone_id?: string; is_enabled?: boolean },
 ): Promise<TableOut> {
   return request<TableOut>(`/floor/tables/${tableId}`, { method: "PATCH", body: input });
 }

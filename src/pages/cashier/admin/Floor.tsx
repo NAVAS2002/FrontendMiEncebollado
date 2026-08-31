@@ -8,6 +8,7 @@ import {
   listZones,
   moveTable,
   renameZone,
+  setZoneEnabled,
   updateTable,
 } from "../../../api/floor";
 import { ApiError } from "../../../api/client";
@@ -107,6 +108,7 @@ function ZoneCard({
   const [name, setName] = useState(zone.name);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [enabledBusy, setEnabledBusy] = useState(false);
 
   async function save() {
     if (!name.trim() || name === zone.name) {
@@ -122,6 +124,18 @@ function ZoneCard({
       onError(err instanceof ApiError ? err.message : "No se pudo renombrar la sección.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function toggleEnabled() {
+    setEnabledBusy(true);
+    try {
+      await setZoneEnabled(zone.id, !zone.is_enabled);
+      onChanged();
+    } catch (err) {
+      onError(err instanceof ApiError ? err.message : "No se pudo cambiar la sección.");
+    } finally {
+      setEnabledBusy(false);
     }
   }
 
@@ -156,10 +170,34 @@ function ZoneCard({
             </button>
           </div>
         ) : (
-          <h2 className="font-headline-md text-headline-md text-on-surface">{zone.name}</h2>
+          <div className="flex items-center gap-2">
+            <h2
+              className={`font-headline-md text-headline-md ${
+                zone.is_enabled ? "text-on-surface" : "text-on-surface-variant"
+              }`}
+            >
+              {zone.name}
+            </h2>
+            {!zone.is_enabled && (
+              <span className="font-label-caps text-[10px] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">
+                Apagada
+              </span>
+            )}
+          </div>
         )}
         {!editing && (
           <div className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={toggleEnabled}
+              disabled={enabledBusy}
+              className={`h-9 w-9 flex items-center justify-center rounded-full disabled:opacity-50 ${
+                zone.is_enabled ? "text-tertiary" : "text-on-surface-variant"
+              }`}
+              aria-label={zone.is_enabled ? "Apagar sección" : "Encender sección"}
+              title={zone.is_enabled ? "Apagar sección" : "Encender sección"}
+            >
+              <Icon name={zone.is_enabled ? "toggle_on" : "toggle_off"} className="text-[22px]" />
+            </button>
             <button
               onClick={() => setEditing(true)}
               className="h-9 w-9 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-full"
@@ -225,7 +263,6 @@ function AddTableInline({
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [seats, setSeats] = useState("4");
-  const [weekendOnly, setWeekendOnly] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function submit() {
@@ -236,10 +273,8 @@ function AddTableInline({
         code: code.trim(),
         seats: Number(seats) || 4,
         zone_id: zoneId,
-        weekend_only: weekendOnly,
       });
       setCode("");
-      setWeekendOnly(false);
       setOpen(false);
       onChanged();
     } catch (err) {
@@ -283,14 +318,6 @@ function AddTableInline({
           className="w-20 h-10 rounded-lg border border-outline-variant bg-surface px-3 font-body-md text-body-md outline-none focus:ring-2 focus:ring-tertiary"
         />
       </div>
-      <label className="flex items-center gap-1 font-body-md text-[13px] text-on-surface-variant h-10">
-        <input
-          type="checkbox"
-          checked={weekendOnly}
-          onChange={(e) => setWeekendOnly(e.target.checked)}
-        />
-        Solo fin de semana
-      </label>
       <button
         onClick={submit}
         disabled={busy || !code.trim()}
@@ -323,7 +350,7 @@ function TableRow({
   const [code, setCode] = useState(table.code);
   const [seats, setSeats] = useState(String(table.seats));
   const [zoneId, setZoneId] = useState(table.zone_id ?? "");
-  const [weekendBusy, setWeekendBusy] = useState(false);
+  const [enabledBusy, setEnabledBusy] = useState(false);
 
   async function save() {
     try {
@@ -339,15 +366,15 @@ function TableRow({
     }
   }
 
-  async function toggleWeekendOnly() {
-    setWeekendBusy(true);
+  async function toggleEnabled() {
+    setEnabledBusy(true);
     try {
-      await updateTable(table.id, { weekend_only: !table.weekend_only });
+      await updateTable(table.id, { is_enabled: !table.is_enabled });
       onChanged();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : "No se pudo cambiar la mesa.");
     } finally {
-      setWeekendBusy(false);
+      setEnabledBusy(false);
     }
   }
 
@@ -404,27 +431,33 @@ function TableRow({
   return (
     <div className="border border-outline-variant rounded-lg px-stack-sm py-2 flex items-center justify-between">
       <div>
-        <span className="font-body-md text-body-md font-medium">{table.code}</span>
+        <span
+          className={`font-body-md text-body-md font-medium ${
+            table.is_enabled ? "" : "text-on-surface-variant"
+          }`}
+        >
+          {table.code}
+        </span>
         <span className="font-body-md text-[13px] text-on-surface-variant ml-2">
           {table.seats} puestos · {table.status}
         </span>
-        {table.weekend_only && (
-          <span className="ml-2 inline-flex items-center gap-0.5 font-label-caps text-[11px] text-tertiary">
-            <Icon name="weekend" className="text-[13px]" /> Fin de semana
+        {!table.is_enabled && (
+          <span className="ml-2 font-label-caps text-[10px] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">
+            Apagada
           </span>
         )}
       </div>
       <div className="flex items-center gap-1">
         <button
-          onClick={toggleWeekendOnly}
-          disabled={weekendBusy}
+          onClick={toggleEnabled}
+          disabled={enabledBusy}
           className={`h-8 w-8 flex items-center justify-center rounded-full disabled:opacity-50 ${
-            table.weekend_only ? "text-tertiary" : "text-on-surface-variant"
+            table.is_enabled ? "text-tertiary" : "text-on-surface-variant"
           }`}
-          aria-label="Solo fin de semana"
-          title={table.weekend_only ? "Quitar 'solo fin de semana'" : "Marcar 'solo fin de semana'"}
+          aria-label={table.is_enabled ? "Apagar mesa" : "Encender mesa"}
+          title={table.is_enabled ? "Apagar mesa" : "Encender mesa"}
         >
-          <Icon name="weekend" className="text-[16px]" />
+          <Icon name={table.is_enabled ? "toggle_on" : "toggle_off"} className="text-[20px]" />
         </button>
         <button onClick={() => setEditing(true)} className="text-on-surface-variant">
           <Icon name="edit" className="text-[16px]" />
@@ -449,7 +482,6 @@ function NewTableCard({
   const [code, setCode] = useState("");
   const [seats, setSeats] = useState("4");
   const [zoneId, setZoneId] = useState(zones[0]?.id ?? "");
-  const [weekendOnly, setWeekendOnly] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function submit() {
@@ -460,10 +492,8 @@ function NewTableCard({
         code: code.trim(),
         seats: Number(seats) || 4,
         zone_id: zoneId || null,
-        weekend_only: weekendOnly,
       });
       setCode("");
-      setWeekendOnly(false);
       onChanged();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : "No se pudo crear la mesa.");
@@ -509,14 +539,6 @@ function NewTableCard({
             ))}
           </select>
         </div>
-        <label className="flex items-center gap-1 font-body-md text-body-md text-on-surface-variant h-11">
-          <input
-            type="checkbox"
-            checked={weekendOnly}
-            onChange={(e) => setWeekendOnly(e.target.checked)}
-          />
-          Solo fin de semana
-        </label>
         <button
           onClick={submit}
           disabled={busy || !code.trim()}

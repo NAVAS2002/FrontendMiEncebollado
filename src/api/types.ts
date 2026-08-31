@@ -94,7 +94,7 @@ export interface TableOut {
   seats: number;
   status: TableStatus;
   current_order_id: string | null;
-  weekend_only: boolean;
+  is_enabled: boolean;
   bill_requested_by_name: string | null;
   pos_x: number;
   pos_y: number;
@@ -104,6 +104,7 @@ export interface ZoneOut {
   id: string;
   name: string;
   sort_order: number;
+  is_enabled: boolean;
 }
 
 // --- Pedidos ---

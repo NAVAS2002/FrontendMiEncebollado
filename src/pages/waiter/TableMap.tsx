@@ -7,7 +7,6 @@ import { Icon } from "../../components/Icon";
 import { Loading } from "../../components/Loading";
 import { WaiterShell } from "../../components/WaiterShell";
 import { groupTablesByZone } from "../../lib/tables";
-import { isWeekendNow } from "../../lib/time";
 import { useRealtime } from "../../state/RealtimeContext";
 
 export default function TableMap() {
@@ -33,10 +32,18 @@ export default function TableMap() {
     [load],
   );
 
-  const showWeekendTables = isWeekendNow();
-  const visibleTables =
-    tables?.filter((t) => !t.weekend_only || showWeekendTables) ?? [];
-  const sections = groupTablesByZone(visibleTables, zones);
+  // Una mesa o sección apagada no se muestra, salvo que tenga un pedido
+  // abierto: eso nunca se esconde, para no perderle el rastro.
+  const enabledZoneIds = new Set(zones.filter((z) => z.is_enabled).map((z) => z.id));
+  const visibleTables = (tables ?? []).filter(
+    (t) =>
+      t.current_order_id !== null ||
+      (t.is_enabled && (t.zone_id === null || enabledZoneIds.has(t.zone_id))),
+  );
+  const visibleZones = zones.filter(
+    (z) => z.is_enabled || visibleTables.some((t) => t.zone_id === z.id),
+  );
+  const sections = groupTablesByZone(visibleTables, visibleZones);
 
   return (
     <WaiterShell title="Mesas">
