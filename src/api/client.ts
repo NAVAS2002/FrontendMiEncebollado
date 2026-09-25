@@ -1,13 +1,27 @@
 import { clearSession, getSession, setSession } from "./session";
 import type { ApiErrorBody, TokenOut } from "./types";
 
-// Sin VITE_API_URL, se infiere el backend desde el mismo host con el que se
-// abrió la app (localhost, 127.0.0.1 o la IP de LAN): así el teléfono que
-// entra por http://192.168.x.x:5173 llama a http://192.168.x.x:3000 solo,
-// en vez de a "localhost" (que en el teléfono sería el propio teléfono).
-export const API_BASE =
-  (import.meta.env.VITE_API_URL as string) || `http://${window.location.hostname}:3000/api/v1`;
-export const WS_BASE = (import.meta.env.VITE_WS_URL as string) || API_BASE.replace(/^http/, "ws").replace(/\/api\/v1$/, "/ws");
+// Tres formas de decirle a la app dónde está el backend, de más a menos
+// automática:
+//  1. VITE_API_URL="/api/v1" (relativa): usa el MISMO origen desde el que se
+//     abrió la página. Es la del despliegue con Docker, donde nginx sirve la
+//     app y reenvía /api y /ws al backend: cambiar de red o de IP no exige
+//     tocar ni recompilar nada.
+//  2. VITE_API_URL="https://api.midominio.com/api/v1" (absoluta): backend en
+//     otro host (Render, etc.).
+//  3. Sin VITE_API_URL: mismo host con el que se abrió la app pero puerto
+//     3000, para desarrollo (el teléfono que entra por http://192.168.x.x:5173
+//     llama a http://192.168.x.x:3000 y no a su propio "localhost").
+function resolveApiBase(configured: string | undefined): string {
+  if (!configured) return `http://${window.location.hostname}:3000/api/v1`;
+  if (configured.startsWith("/")) return `${window.location.origin}${configured}`;
+  return configured;
+}
+
+export const API_BASE = resolveApiBase(import.meta.env.VITE_API_URL as string | undefined);
+// El WebSocket cuelga del mismo origen que la API: http→ws y https→wss.
+export const WS_BASE =
+  (import.meta.env.VITE_WS_URL as string) || API_BASE.replace(/^http/, "ws").replace(/\/api\/v1$/, "/ws");
 
 export class ApiError extends Error {
   code: string;
