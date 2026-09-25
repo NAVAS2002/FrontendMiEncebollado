@@ -69,7 +69,7 @@ export function CartBar({
             {cart.lines.map((line) => (
               <div
                 key={line.cartId}
-                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col gap-1 shadow-sm animate-slide-up-fade"
+                className="bg-surface-container-low ring-1 ring-white/5 rounded-xl p-stack-md flex flex-col gap-1 shadow-sm animate-slide-up-fade"
               >
                 <div className="flex justify-between items-start">
                   <span className="font-body-md text-body-md text-on-surface font-medium">
@@ -98,10 +98,10 @@ export function CartBar({
                   </span>
                 )}
                 <div className="flex items-center justify-between mt-1">
-                  <div className="flex items-center bg-surface-container rounded-full h-9 border border-outline-variant">
+                  <div className="flex items-center bg-surface-container-high rounded-full h-9 ring-1 ring-white/5">
                     <button
                       onClick={() => cart.updateQuantity(line.cartId, line.quantity - 1)}
-                      className="w-9 h-full flex items-center justify-center rounded-full active:scale-90 active:bg-surface-dim transition-all duration-150"
+                      className="w-9 h-full flex items-center justify-center rounded-full active:scale-90 active:bg-surface-container-highest transition-all duration-150"
                     >
                       <Icon name="remove" className="text-[18px]" />
                     </button>
@@ -110,7 +110,7 @@ export function CartBar({
                     </span>
                     <button
                       onClick={() => cart.updateQuantity(line.cartId, line.quantity + 1)}
-                      className="w-9 h-full flex items-center justify-center rounded-full active:scale-90 active:bg-surface-dim transition-all duration-150"
+                      className="w-9 h-full flex items-center justify-center rounded-full active:scale-90 active:bg-surface-container-highest transition-all duration-150"
                     >
                       <Icon name="add" className="text-[18px]" />
                     </button>

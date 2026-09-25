@@ -109,7 +109,7 @@ export default function TableOrder() {
           <button
             onClick={askForBill}
             disabled={busy}
-            className="flex items-center gap-1 h-10 px-4 rounded-full bg-surface-container-lowest border border-outline-variant font-label-caps text-label-caps text-on-surface active:scale-95 transition-all disabled:opacity-50"
+            className="flex items-center gap-1 h-10 px-4 rounded-full bg-primary text-on-primary text-label-md active:scale-95 transition-all disabled:opacity-50 shadow-md"
           >
             <Icon name="receipt_long" className="text-[18px]" />
             Pedir la cuenta
@@ -127,7 +127,7 @@ export default function TableOrder() {
             </h2>
             <OrderStatusBadge status={order.status} />
           </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl divide-y divide-outline-variant shadow-sm">
+          <div className="bg-surface-container-low ring-1 ring-white/5 rounded-xl divide-y divide-white/5 shadow-sm">
             {order.lines.map((line) => (
               <div key={line.id} className="p-stack-md flex justify-between">
                 <div>

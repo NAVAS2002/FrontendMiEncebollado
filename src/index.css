@@ -8,9 +8,31 @@ body,
   height: 100%;
 }
 
+/* color-scheme oscuro: los controles nativos (checkbox, select, scrollbar,
+   selector de archivos) se dibujan oscuros en vez de con el tema claro del
+   navegador. El fondo del html evita un destello blanco al hacer overscroll. */
+html {
+  color-scheme: dark;
+  background-color: #111418;
+}
+
 body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+::selection {
+  background: #ffc174;
+  color: #472a00;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .material-symbols-outlined {
@@ -48,8 +70,16 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d9dadb;
+  background: #323539;
   border-radius: 4px;
+}
+
+/* Carruseles horizontales (categorías): sin barra visible, se desliza con el dedo. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .safe-bottom {

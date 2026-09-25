@@ -29,7 +29,7 @@ export function MenuGrid({ menu, returnTo }: { menu: MenuOut; returnTo: string }
 
   return (
     <div>
-      <div className="w-full bg-surface px-margin-mobile flex overflow-x-auto gap-stack-sm py-stack-sm sticky top-[44px] z-20">
+      <div className="w-full bg-background/90 backdrop-blur-md px-margin-mobile flex overflow-x-auto no-scrollbar gap-stack-sm py-stack-sm sticky top-14 z-20">
         <CategoryChip
           active={activeCategory === "all"}
           icon="local_fire_department"
@@ -82,7 +82,7 @@ function CategoryChip({
       className={`shrink-0 flex flex-col items-center justify-center gap-1 w-[72px] h-[72px] rounded-2xl transition-all duration-200 ${
         active
           ? "bg-primary text-on-primary shadow-md scale-[1.04]"
-          : "bg-surface-container-low text-on-surface-variant active:scale-95"
+          : "bg-surface-container-low text-on-surface-variant ring-1 ring-white/5 active:scale-95"
       }`}
     >
       <Icon name={icon} filled={active} className="text-[22px]" />
@@ -101,16 +101,16 @@ function ProductCard({ product, onClick }: { product: ProductOut; onClick: () =>
     <button
       onClick={onClick}
       disabled={!product.is_available}
-      className="flex flex-col text-left bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm hover:shadow-md active:scale-[0.97] transition-all duration-200 disabled:opacity-50"
+      className="flex flex-col text-left bg-surface-container-low ring-1 ring-white/5 rounded-2xl overflow-hidden shadow-sm hover:bg-surface-container active:scale-[0.97] transition-all duration-200 disabled:opacity-50"
     >
-      <div className="relative aspect-square w-full bg-gradient-to-br from-primary-container to-primary flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-square w-full bg-gradient-to-br from-surface-container-high to-surface-container-highest flex items-center justify-center overflow-hidden">
         {imageSrc ? (
           <img src={imageSrc} alt={product.name} className="h-full w-full object-cover" />
         ) : (
-          <Icon name="ramen_dining" className="text-[44px] text-on-primary-container/60" />
+          <Icon name="ramen_dining" className="text-[44px] text-primary/50" />
         )}
         {!product.is_available && (
-          <span className="absolute inset-0 bg-surface/80 flex items-center justify-center font-label-caps text-label-caps text-error">
+          <span className="absolute inset-0 bg-background/80 flex items-center justify-center font-label-caps text-label-caps text-error">
             Agotado
           </span>
         )}

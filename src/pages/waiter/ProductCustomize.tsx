@@ -263,19 +263,19 @@ export default function ProductCustomize() {
         )}
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant p-margin-mobile z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] safe-bottom">
+      <div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant p-margin-mobile z-50 shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.6)] safe-bottom">
         <div className="max-w-2xl mx-auto flex gap-stack-md items-center">
           <div className="flex items-center bg-surface-container rounded-full h-[48px] border border-outline-variant">
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="w-touch-target-min h-full flex items-center justify-center rounded-l-full active:bg-surface-dim transition-colors"
+              className="w-touch-target-min h-full flex items-center justify-center rounded-l-full active:bg-surface-container-highest transition-colors"
             >
               <Icon name="remove" />
             </button>
             <span className="font-numeric-pin text-numeric-pin px-2 min-w-[44px] text-center">{quantity}</span>
             <button
               onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-              className="w-touch-target-min h-full flex items-center justify-center rounded-r-full active:bg-surface-dim transition-colors"
+              className="w-touch-target-min h-full flex items-center justify-center rounded-r-full active:bg-surface-container-highest transition-colors"
             >
               <Icon name="add" />
             </button>
@@ -283,12 +283,10 @@ export default function ProductCustomize() {
           <button
             disabled={!canSubmit()}
             onClick={addToOrder}
-            className="flex-1 bg-primary text-on-primary h-[48px] rounded-full flex justify-between items-center px-6 active:scale-[0.98] transition-all disabled:opacity-50"
+            className="flex-1 min-w-0 bg-primary text-on-primary h-[48px] rounded-full flex justify-between items-center gap-2 px-5 active:scale-[0.98] transition-all disabled:opacity-50"
           >
-            <span className="font-headline-md text-headline-md font-bold tracking-wide text-[16px]">
-              Agregar al pedido
-            </span>
-            <span className="font-numeric-pin text-numeric-pin font-bold">{formatMoney(unitPrice * quantity)}</span>
+            <span className="text-headline-sm font-bold whitespace-nowrap">Agregar</span>
+            <span className="text-mono-metric font-bold whitespace-nowrap">{formatMoney(unitPrice * quantity)}</span>
           </button>
         </div>
       </div>

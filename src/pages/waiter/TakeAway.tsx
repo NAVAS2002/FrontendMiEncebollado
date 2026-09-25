@@ -93,7 +93,7 @@ export default function TakeAway() {
             {recent.map((o) => (
               <div
                 key={o.id}
-                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex items-center justify-between shadow-sm"
+                className="bg-surface-container-low ring-1 ring-white/5 rounded-xl p-stack-md flex items-center justify-between shadow-sm"
               >
                 <div>
                   <p className="font-body-md text-body-md text-on-surface">

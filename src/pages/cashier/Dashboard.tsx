@@ -94,9 +94,9 @@ export default function Dashboard() {
                   const max = Math.max(...data.by_hour.map((x) => Number(x.total)), 1);
                   const height = Math.max(4, (Number(h.total) / max) * 100);
                   return (
-                    <div key={h.hour} className="flex flex-col items-center gap-1 w-10 shrink-0">
+                    <div key={h.hour} className="flex flex-col items-center justify-end gap-1 w-10 h-full shrink-0">
                       <div
-                        className="w-full bg-tertiary rounded-t"
+                        className="w-full bg-primary rounded-t"
                         style={{ height: `${height}%` }}
                         title={formatMoney(h.total)}
                       />

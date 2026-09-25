@@ -9,7 +9,7 @@ const SIZE_CLASSES = {
 export function StoreLogo({ size = "md" }: { size?: keyof typeof SIZE_CLASSES }) {
   const s = SIZE_CLASSES[size];
   return (
-    <span className={`shrink-0 rounded-full bg-primary text-on-primary flex items-center justify-center ${s.badge}`}>
+    <span className={`shrink-0 rounded-xl bg-primary text-on-primary shadow-md flex items-center justify-center ${s.badge}`}>
       <Icon name="storefront" filled className={s.icon} />
     </span>
   );
