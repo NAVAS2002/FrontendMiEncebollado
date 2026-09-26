@@ -35,7 +35,7 @@ export default defineConfig({
         clientsClaim: true,
         // La verdad siempre se lee por HTTP (regla del backend); el service
         // worker solo cachea el shell de la app para que abra sin red.
-        navigateFallbackDenylist: [/^\/api/, /^\/ws/],
+        navigateFallbackDenylist: [/^\/api/, /^\/ws/, /^\/instalar/, /^\/certificado/],
         runtimeCaching: [
           {
             urlPattern: /\/api\/v1\/catalog\/menu/,
