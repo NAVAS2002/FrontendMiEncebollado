@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="dark" />
   <title>Instalar Mi Encebollado</title>
   <style>
-    :root { --bg:#111418; --card:#1d2024; --line:#2a2e33; --text:#e1e2e8; --muted:#d8c3ad; --amber:#ffc174; --on-amber:#472a00; --mint:#4edea3; }
+    :root { --bg:#111418; --card:#1d2024; --line:#2a2e33; --text:#e1e2e8; --muted:#d8c3ad; --amber:#ffc174; --on-amber:#472a00; --mint:#4edea3; --coral:#ffbcb7; }
     * { box-sizing: border-box; }
     body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding:24px 16px 48px; }
     main { max-width: 520px; margin: 0 auto; }
@@ -19,15 +19,18 @@
     h2 { font-size: 17px; margin: 0; }
     .card p { margin: 8px 0; color: var(--muted); font-size: 15px; }
     .btn { display: block; text-align: center; text-decoration: none; background: var(--amber); color: var(--on-amber); font-weight: 700; padding: 14px 16px; border-radius: 999px; margin-top: 12px; }
-    .btn.off { background: transparent; border: 1px solid var(--line); color: var(--muted); pointer-events: none; }
     details { border-top: 1px solid var(--line); padding: 10px 0 2px; margin-top: 10px; }
     summary { cursor: pointer; font-weight: 600; }
-    ol { margin: 8px 0 4px; padding-left: 20px; color: var(--muted); font-size: 15px; }
+    ol, ul { margin: 8px 0 4px; padding-left: 20px; color: var(--muted); font-size: 15px; }
     li { margin: 4px 0; }
-    .ok { border-color: var(--mint); }
-    .ok h2 { color: var(--mint); }
+    .estado { border-radius: 12px; padding: 12px 14px; margin-top: 12px; font-size: 15px; border: 1px solid var(--line); }
+    .estado > b { display: block; font-size: 16px; margin-bottom: 2px; }
+    .estado.ok { border-color: var(--mint); color: var(--mint); }
+    .estado.mal { border-color: var(--coral); color: var(--coral); }
+    .estado.mal ul, .estado.mal p { color: var(--muted); }
+    .estado.esp { color: var(--muted); }
+    code { background: #0b0e12; padding: 1px 6px; border-radius: 6px; color: var(--text); word-break: break-all; }
     .hide { display: none; }
-    code { background: #0b0e12; padding: 1px 6px; border-radius: 6px; color: var(--text); }
   </style>
 </head>
 <body>
@@ -35,53 +38,102 @@
   <h1>Instalar Mi Encebollado</h1>
   <p class="sub">Tres pasos, una sola vez en cada celular.</p>
 
-  <section id="ya-seguro" class="card ok hide">
-    <h2>Ya estás en una conexión segura</h2>
-    <p>Abre el menú del navegador (los tres puntos) y elige <b>Instalar app</b> o <b>Añadir a la pantalla de inicio</b>. En iPhone: botón Compartir y <b>Añadir a pantalla de inicio</b>.</p>
-  </section>
-
   <section class="card">
     <div class="step"><span class="n">1</span><h2>Descarga el certificado</h2></div>
     <p>Es el sello que le dice a tu celular que este servidor es de confianza. Sin él, el navegador no permite instalar la app.</p>
-    <a class="btn" href="/certificado.crt" download="certificado-MiEncebollado.crt">Descargar certificado</a>
+    <a id="descarga" class="btn" href="/certificado-manual.crt" download="certificado-MiEncebollado.crt">Descargar certificado</a>
   </section>
 
   <section class="card">
     <div class="step"><span class="n">2</span><h2>Instálalo en el celular</h2></div>
-    <details>
+    <details id="d-android">
       <summary>Android</summary>
       <ol>
-        <li>Abre <b>Ajustes</b> y busca <b>Certificado</b> (o Seguridad, luego Cifrado y credenciales).</li>
-        <li>Elige <b>Instalar un certificado</b>, luego <b>Certificado de CA</b> y confirma el aviso.</li>
+        <li>Abre <b>Ajustes</b> y busca <b>certificado</b> (o entra a Seguridad, luego Cifrado y credenciales).</li>
+        <li>Elige <b>Instalar un certificado</b> y luego <b>Certificado de CA</b> (no "VPN y aplicaciones") y confirma el aviso.</li>
         <li>Selecciona el archivo <code>certificado-MiEncebollado.crt</code> de Descargas.</li>
         <li>Si te pide un bloqueo de pantalla (PIN o patrón), actívalo primero.</li>
+        <li>Usa <b>Chrome</b> o <b>Samsung Internet</b>; Firefox no usa estos certificados.</li>
       </ol>
     </details>
-    <details>
+    <details id="d-ios">
       <summary>iPhone / iPad</summary>
       <ol>
-        <li>Al descargar, elige <b>Permitir</b> y luego abre <b>Ajustes</b>: aparece "Perfil descargado".</li>
-        <li>Tócalo y pulsa <b>Instalar</b> (te pide el código del teléfono).</li>
-        <li>Ve a Ajustes, General, Información, <b>Ajustes de confianza de certificados</b> y activa "Mi Encebollado".</li>
+        <li>Usa <b>Safari</b>. Al descargar, elige <b>Permitir</b>.</li>
+        <li>Abre <b>Ajustes</b>: aparece "Perfil descargado". Tócalo y pulsa <b>Instalar</b> (pide el código del teléfono).</li>
+        <li>Luego entra a Ajustes, General, Información, <b>Ajustes de confianza de certificados</b> y activa "Caddy Local Authority". <b>Sin este paso no funciona.</b></li>
       </ol>
     </details>
   </section>
 
   <section class="card">
-    <div class="step"><span class="n">3</span><h2>Abre la app segura</h2></div>
-    <p>Con el certificado instalado, entra por la dirección segura y usa <b>Instalar app</b> del menú del navegador.</p>
+    <div class="step"><span class="n">3</span><h2>Comprueba y abre la app segura</h2></div>
+    <div id="estado" class="estado esp"><b>Comprobando…</b>Verificando si este celular ya confía en el servidor.</div>
     <a id="seguro" class="btn" href="#">Abrir Mi Encebollado (seguro)</a>
+    <p>Dirección segura: <code id="dir">…</code></p>
   </section>
 </main>
+
 <script>
-  var esSeguro = location.protocol === "https:";
-  if (esSeguro) {
-    document.getElementById("ya-seguro").classList.remove("hide");
-    var b = document.getElementById("seguro");
-    b.href = "/mesero"; b.textContent = "Abrir Mi Encebollado";
-  } else {
-    document.getElementById("seguro").href = "https://" + location.hostname + "/mesero";
+(function () {
+  var ua = navigator.userAgent || "";
+  var esIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var esAndroid = /Android/.test(ua);
+  var $ = function (id) { return document.getElementById(id); };
+
+  // iPhone necesita el tipo MIME de certificado para ofrecer "Perfil descargado";
+  // Android es más fiable descargando el archivo y eligiéndolo en Ajustes.
+  if (esIOS) { $("descarga").href = "/certificado.crt"; $("d-ios").open = true; }
+  else { $("d-android").open = esAndroid || !esIOS; }
+
+  // Dirección segura: la IP con la que el servidor emitió su certificado
+  // (puede no ser la que se tecleó aquí si el equipo tiene varias redes).
+  function conConfig(cfg) {
+    var host = (cfg && cfg.host) || location.hostname;
+    var puerto = (cfg && cfg.httpsPort && cfg.httpsPort !== "443") ? ":" + cfg.httpsPort : "";
+    return { host: host, base: "https://" + host + puerto };
   }
+
+  function mostrar(cfg) {
+    var s = conConfig(cfg);
+    $("dir").textContent = s.base;
+    $("seguro").href = s.base + "/mesero";
+
+    if (location.protocol === "https:") {
+      $("estado").className = "estado ok";
+      $("estado").innerHTML = "<b>Conexión segura</b>Este celular ya confía en el servidor. Abre el menú del navegador y elige <b>Instalar app</b> (o Añadir a pantalla de inicio).";
+      $("seguro").href = "/mesero";
+      return;
+    }
+
+    // Si el certificado no es de confianza, el navegador rechaza la conexión y
+    // fetch falla; si lo es, responde (aunque sea "opaco" por ser otro origen).
+    var controlador = new AbortController();
+    var t = setTimeout(function () { controlador.abort(); }, 6000);
+    fetch(s.base + "/instalar.html?c=" + Date.now(), { mode: "no-cors", cache: "no-store", signal: controlador.signal })
+      .then(function () {
+        clearTimeout(t);
+        $("estado").className = "estado ok";
+        $("estado").innerHTML = "<b>Listo: este celular ya confía en el servidor</b>Pulsa el botón para abrir la app segura y luego elige <b>Instalar app</b> en el menú del navegador.";
+      })
+      .catch(function () {
+        clearTimeout(t);
+        $("estado").className = "estado mal";
+        $("estado").innerHTML = "<b>Todavía no confía en el servidor</b>" +
+          "<p>Revisa, en este orden:</p><ul>" +
+          "<li>Que hayas instalado el certificado (pasos 1 y 2). Si lo instalaste antes de reinstalar el sistema, descarga e instala el nuevo.</li>" +
+          "<li>Android: que sea <b>Certificado de CA</b>, no \"VPN y aplicaciones\". iPhone: que hayas activado la confianza en Ajustes, General, Información.</li>" +
+          "<li>Que uses Chrome, Samsung Internet o Safari, y que la fecha y hora del celular sean correctas.</li>" +
+          "<li>Que el celular esté en el mismo WiFi que la PC y pueda abrir <code>" + s.base + "</code>.</li></ul>" +
+          "<p>Después de instalarlo, cierra el navegador y vuelve a abrir esta página.</p>";
+      });
+  }
+
+  fetch("/instalar-config.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .catch(function () { return null; })
+    .then(mostrar);
+})();
 </script>
 </body>
 </html>
